@@ -8,7 +8,6 @@ WORKDIR /application
 # Copy python dependencies and install these
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN pip install pymongo
 # Copy the rest of the applicationssd
 COPY . .
 
