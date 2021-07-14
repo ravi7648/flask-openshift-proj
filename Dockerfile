@@ -1,21 +1,23 @@
-FROM python:3.7.7-slim
+# Inherit python image
+FROM python:3.6-slim
 
-ENV PYTHONUNBUFFERED=1
+# Set up directories
+RUN mkdir /application
+WORKDIR /application
 
-COPY * /opt/microservices/
-COPY requirements.txt /opt/microservices/
-RUN pip install --upgrade pip \
-  && pip install --upgrade pipenv\
-  && apt-get clean \
-  && apt-get update \
-  && apt install -y build-essential \
-  && apt install -y libmariadb3 libmariadb-dev \
-  && pip install --upgrade -r /opt/microservices/requirements.txt
-  && pip install pymongo
+# Copy python dependencies and install these
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+RUN pip install pymongo
+# Copy the rest of the applicationssd
+COPY . .
 
-USER 1001
+# Environment variables
+ENV PYTHONUNBUFFERED 1
 
-EXPOSE 8080
-WORKDIR /opt/microservices/
+# EXPOSE port 8000 to allow communication to/from server
+EXPOSE 8001
+STOPSIGNAL SIGINT
 
-CMD ["python", "app.py", "8080"]
+ENTRYPOINT ["python"]
+CMD ["app.py"]
