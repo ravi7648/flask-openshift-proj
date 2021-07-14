@@ -11,7 +11,7 @@ RUN pip install --upgrade pip \
   && apt install -y build-essential \
   && apt install -y libmariadb3 libmariadb-dev \
   && pip install --upgrade -r /opt/microservices/requirements.txt
-  && pip install PyMongo
+  && pip install pymongo
 
 USER 1001
 
