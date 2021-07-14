@@ -1,22 +1,20 @@
-# Inherit python image
-FROM python:3.6-slim
+FROM python:3.9.4-slim
 
-# Set up directories
-RUN mkdir /application
-WORKDIR /application
+ENV PYTHONUNBUFFERED=1
 
-# Copy python dependencies and install these
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-# Copy the rest of the applicationssd
-COPY . .
+COPY * /opt/microservices/
+COPY requirements.txt /opt/microservices/
+RUN pip install --upgrade pip \
+  && pip install --upgrade pipenv\
+  && apt-get clean \
+  && apt-get update \
+  && apt install -y build-essential \
+  && apt install -y libmariadb3 libmariadb-dev \
+  && pip install --upgrade -r /opt/microservices/requirements.txt
 
-# Environment variables
-ENV PYTHONUNBUFFERED 1
+USER 1001
 
-# EXPOSE port 8000 to allow communication to/from server
-EXPOSE 8001
-STOPSIGNAL SIGINT
+EXPOSE 8080
+WORKDIR /opt/microservices/
 
-ENTRYPOINT ["python"]
-CMD ["app.py"]
+CMD ["python", "app.py", "8080"]
